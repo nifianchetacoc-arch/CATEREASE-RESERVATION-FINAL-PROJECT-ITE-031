@@ -1,0 +1,80 @@
+DROP DATABASE IF EXISTS grazingtable;
+
+CREATE DATABASE grazingtable;
+USE grazingtable;
+
+CREATE TABLE admin (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE packages (
+    package_id INT AUTO_INCREMENT PRIMARY KEY,
+    package_name VARCHAR(100) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    pax VARCHAR(50) NOT NULL,
+    status ENUM('Active','Inactive') DEFAULT 'Active'
+);
+
+CREATE TABLE customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    contact_number VARCHAR(20) NOT NULL,
+    email VARCHAR(100)
+);
+
+CREATE TABLE reservations (
+    reservation_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    package_id INT NOT NULL,
+    event_date DATE NOT NULL,
+    event_time TIME NOT NULL,
+    occasion VARCHAR(100) NOT NULL,
+    venue VARCHAR(255) NOT NULL,
+    status ENUM('Pending','Approved','Rejected','Completed')
+        DEFAULT 'Pending',
+    FOREIGN KEY (customer_id)
+        REFERENCES customers(customer_id),
+    FOREIGN KEY (package_id)
+        REFERENCES packages(package_id)
+);
+
+CREATE TABLE payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    reservation_id INT NOT NULL,
+    payment_method ENUM('GCash','MariBank') NOT NULL,
+    downpayment DECIMAL(10,2) NOT NULL,
+    payment_date DATE NOT NULL,
+    payment_time TIME NOT NULL,
+    payment_status ENUM('Pending','Paid','Failed')
+        DEFAULT 'Pending',
+    FOREIGN KEY (reservation_id)
+        REFERENCES reservations(reservation_id)
+);
+
+INSERT INTO admin (username, password)
+VALUES ('admin', 'admin123');
+
+INSERT INTO packages (package_name, description, price, pax)
+VALUES
+('Snack Bar & Desserts',
+ 'A mix of tasty snacks, desserts, and refreshing drinks.',
+ 9700.00, '60-70 pax'),
+
+('Sweet & Savory',
+ 'A delicious combination of sweet treats and savory snacks.',
+ 12500.00, '35-40 pax'),
+
+('Dessert Table',
+ 'A variety of sweet desserts perfect for any celebration.',
+ 8100.00, '35-40 pax'),
+
+('Kakanin Package',
+ 'A selection of Filipino kakanin and traditional treats.',
+ 9300.00, '90-100 pax'),
+
+('Kakanin Package',
+ 'A selection of Filipino kakanin and traditional treats.',
+ 6500.00, '40-50 pax');
